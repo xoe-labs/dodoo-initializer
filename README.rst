@@ -13,7 +13,7 @@ as composable python functions.
 
 .. contents::
 
-Script [EXAMPLE - Put output of `--help` here]
+Script
 ~~~~~~
 .. code:: bash
 
