@@ -4,7 +4,8 @@
 #
 # This file is part of the click-odoo-initializer (R) project.
 # Copyright (c) 2018 ACSONE SA/NV {{ COPYRIGHT }} XOE Corp. SAS
-# Authors: Stéphane Bidoul, Thomas Binsfeld, Benjamin Willig, David Arnold, et al.
+# Authors: Stéphane Bidoul, Thomas Binsfeld, Benjamin Willig,
+# David Arnold, et al.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -23,7 +24,6 @@
 import logging
 import contextlib
 import hashlib
-import logging
 import os
 import re
 
@@ -35,7 +35,7 @@ import click_odoo
 
 from click_odoo import odoo
 
-from utils.manifests import expand_dependencies
+from utils.manifest import expand_dependencies
 
 _logger = logging.getLogger(__name__)
 

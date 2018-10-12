@@ -4,7 +4,8 @@
 #
 # This file is part of the click-odoo-initializer (R) project.
 # Copyright (c) 2018 ACSONE SA/NV and XOE Corp. SAS
-# Authors: Stéphane Bidoul, Thomas Binsfeld, Benjamin Willig, David Arnold, et al.
+# Authors: Stéphane Bidoul, Thomas Binsfeld, Benjamin Willig,
+# David Arnold, et al.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -26,31 +27,27 @@ import textwrap
 
 from datetime import timedelta, datetime
 
-import click
-import click_odoo
-from click.testing import CliRunner
-
-from src import initalizer
-from src.initalizer import DbCache,main
-
-from click.testing import CliRunner
 import mock
 import pytest
 
+from click.testing import CliRunner
+import click_odoo
+
+from src import initializer
 
 TEST_DBNAME = 'click-odoo-contrib-testdb'
 TEST_DBNAME_NEW = 'click-odoo-contrib-testdb-new'
 TEST_PREFIX = 'tstpfx9'
-TEST_HASH1 = 'a' * DbCache.HASH_SIZE
-TEST_HASH2 = 'b' * DbCache.HASH_SIZE
-TEST_HASH3 = 'c' * DbCache.HASH_SIZE
+TEST_HASH1 = 'a' * initializer.DbCache.HASH_SIZE
+TEST_HASH2 = 'b' * initializer.DbCache.HASH_SIZE
+TEST_HASH3 = 'c' * initializer.DbCache.HASH_SIZE
 TODAY = datetime(2018, 5, 10)
 TODAY_MINUS_2 = datetime(2018, 5, 8)
 TODAY_MINUS_4 = datetime(2018, 5, 6)
 ADDONS_PATH = ','.join([
     os.path.join(click_odoo.odoo.__path__[0], 'addons'),
     os.path.join(click_odoo.odoo.__path__[0], '..', 'addons'),
-    os.path.join(os.path.dirname(__file__), 'data', 'test_initdb'),
+    os.path.join(os.path.dirname(__file__), 'data', 'test_initializer'),
 ])
 
 
@@ -69,7 +66,7 @@ def pgdb():
 
 @pytest.fixture
 def dbcache():
-    with DbCache(TEST_PREFIX) as c:
+    with initializer.DbCache(TEST_PREFIX) as c:
         try:
             yield c
         finally:
@@ -79,7 +76,7 @@ def dbcache():
 def test_dbcache_create(pgdb, dbcache):
     assert dbcache.size == 0
     assert not dbcache.create(TEST_DBNAME_NEW, TEST_HASH1)
-    with mock.patch.object(initdb, 'datetime') as mock_dt:
+    with mock.patch.object(initializer, 'datetime') as mock_dt:
         # create a few db with known dates
         mock_dt.utcnow.return_value = TODAY_MINUS_4
         dbcache.add(pgdb, TEST_HASH1)
@@ -116,21 +113,21 @@ def test_dbcache_trim_size(pgdb, dbcache):
     assert dbcache.size == 3
     dbcache.trim_size(max_size=2)
     assert dbcache.size == 2
-    result = CliRunner().invoke(main, [
+    result = CliRunner().invoke(initializer.main, [
         '--cache-prefix', TEST_PREFIX,
         '--cache-max-size', '-1',
         '--cache-max-age', '-1',
     ])
     assert result.exit_code == 0
     assert dbcache.size == 2
-    result = CliRunner().invoke(main, [
+    result = CliRunner().invoke(initializer.main, [
         '--cache-prefix', TEST_PREFIX,
         '--cache-max-size', '1',
         '--cache-max-age', '-1',
     ])
     assert result.exit_code == 0
     assert dbcache.size == 1
-    result = CliRunner().invoke(main, [
+    result = CliRunner().invoke(initializer.main, [
         '--cache-prefix', TEST_PREFIX,
         '--cache-max-size', '0',
         '--cache-max-age', '-1',
@@ -141,7 +138,7 @@ def test_dbcache_trim_size(pgdb, dbcache):
 
 def test_dbcache_trim_age(pgdb, dbcache):
     assert dbcache.size == 0
-    with mock.patch.object(initdb, 'datetime') as mock_dt:
+    with mock.patch.object(initializer, 'datetime') as mock_dt:
         # create a few db with known dates
         mock_dt.utcnow.return_value = TODAY
         dbcache.add(pgdb, TEST_HASH1)
@@ -161,7 +158,7 @@ def test_dbcache_trim_age(pgdb, dbcache):
         dbcache.trim_age(timedelta(days=3))
         assert dbcache.size == 2
         # do nothing
-        result = CliRunner().invoke(main, [
+        result = CliRunner().invoke(initializer.main, [
             '--cache-prefix', TEST_PREFIX,
             '--cache-max-size', '-1',
             '--cache-max-age', '-1',
@@ -169,7 +166,7 @@ def test_dbcache_trim_age(pgdb, dbcache):
         assert result.exit_code == 0
         assert dbcache.size == 2
         # drop older than 1 day, drop one
-        result = CliRunner().invoke(main, [
+        result = CliRunner().invoke(initializer.main, [
             '--cache-prefix', TEST_PREFIX,
             '--cache-max-size', '-1',
             '--cache-max-age', '1',
@@ -177,7 +174,7 @@ def test_dbcache_trim_age(pgdb, dbcache):
         assert result.exit_code == 0
         assert dbcache.size == 1
         # drop today too, drop everything
-        result = CliRunner().invoke(main, [
+        result = CliRunner().invoke(initializer.main, [
             '--cache-prefix', TEST_PREFIX,
             '--cache-max-size', '-1',
             '--cache-max-age', '0',
@@ -189,7 +186,7 @@ def test_dbcache_trim_age(pgdb, dbcache):
 def test_create_cmd_cache(dbcache, tmpdir):
     assert dbcache.size == 0
     try:
-        result = CliRunner().invoke(main, [
+        result = CliRunner().invoke(initializer.main, [
             '--cache-prefix', TEST_PREFIX,
             '-n', TEST_DBNAME_NEW,
             '-m', 'auth_signup',
@@ -211,9 +208,9 @@ def test_create_cmd_cache(dbcache, tmpdir):
     finally:
         _dropdb(TEST_DBNAME_NEW)
     # try again, from cache this time
-    with mock.patch.object(initdb, 'odoo_createdb') as m:
+    with mock.patch.object(initializer, 'odoo_createdb') as m:
         try:
-            result = CliRunner().invoke(main, [
+            result = CliRunner().invoke(initializer.main, [
                 '--cache-prefix', TEST_PREFIX,
                 '--new-database', TEST_DBNAME_NEW,
                 '--modules', 'auth_signup',
@@ -233,7 +230,7 @@ def test_create_cmd_cache(dbcache, tmpdir):
         """.format(ADDONS_PATH)))
         cmd = [
             sys.executable,
-            '-m', 'click_odoo_contrib.initdb',
+            '-m', 'src.initializer',
             '-c', str(odoo_cfg),
             '--cache-prefix', TEST_PREFIX,
             '--new-database', TEST_DBNAME_NEW,
@@ -252,7 +249,7 @@ def test_create_cmd_cache(dbcache, tmpdir):
 def test_create_cmd_nocache(dbcache):
     assert dbcache.size == 0
     try:
-        result = CliRunner().invoke(main, [
+        result = CliRunner().invoke(initializer.main, [
             '--no-cache',
             '-n', TEST_DBNAME_NEW,
             '-m', 'auth_signup',
