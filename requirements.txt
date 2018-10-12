@@ -1,0 +1,6 @@
+# Within your virtualenviornment
+# pip freeze >> requirements.txt
+#
+# !!! Don't forget declare the minimum !!!
+# !!! requirements also in setup.py    !!!
+#
