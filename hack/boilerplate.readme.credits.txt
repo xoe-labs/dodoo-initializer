@@ -7,8 +7,10 @@ Contributors:
 - Stéphane Bidoul (ACSONE_)
 - Thomas Binsfeld (ACSONE_)
 - Benjamin Willig (ACSONE_)
+- David Arnold (XOE_)
 
 .. _ACSONE: https://acsone.eu
+.. _XOE: https://xoe.solutions
 
 Maintainer
 ~~~~~~~~~~
@@ -17,4 +19,8 @@ Maintainer
    :alt: ACSONE SA/NV
    :target: https://www.acsone.eu
 
-This project is maintained by ACSONE SA/NV.
+.. image:: https://erp.xoe.solutions/logo.png
+   :alt: XOE Corp. SAS
+   :target: https://xoe.solutions
+
+This project is co-maintained by ACSONE SA/NV and XOE Copr. SAS.

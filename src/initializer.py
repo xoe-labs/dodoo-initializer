@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 #
-# This file is part of the click-odoo-{{ PROJECT }} (R) project.
-# Copyright (c) 2018 {{ COPYRIGHT }}
-# Authors: {{ AUTHOR }}, et al.
+# This file is part of the click-odoo-initializer (R) project.
+# Copyright (c) 2018 ACSONE SA/NV {{ COPYRIGHT }} XOE Corp. SAS
+# Authors: Stéphane Bidoul, Thomas Binsfeld, Benjamin Willig, David Arnold, et al.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -20,12 +20,13 @@
 # along with this library; if not, see <http://www.gnu.org/licenses/>.
 #
 
-# import mock
+import logging
 
 import click
-from click.testing import CliRunner
+import click_odoo
+
 # from click_odoo import odoo
 
-from src.{{ PROJECT }} import main
+# from utils import manifest, gitutils
 
-# from ..utils import manifest, gitutils
+_logger = logging.getLogger(__name__)

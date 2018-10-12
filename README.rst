@@ -1,4 +1,4 @@
-click-odoo-{{ PROJECT }}
+click-odoo-initializer
 ==================
 
 .. image:: https://img.shields.io/badge/license-LGPL--3-blue.svg
@@ -7,7 +7,7 @@ click-odoo-{{ PROJECT }}
 .. image:: https://badge.fury.io/py/click-odoo-.svg
     :target: http://badge.fury.io/py/click-odoo-
 
-``click-odoo-{{ PROJECT }}`` is a set of useful Odoo maintenance functions.
+``click-odoo-initializer`` is a set of useful Odoo maintenance functions.
 They are available as CLI scripts (based on click-odoo_), as well
 as composable python functions.
 
@@ -67,3 +67,29 @@ Useful links
 - report issues at: https://github.com//click-odoo-/issues
 
 .. _click-odoo: https://pypi.python.org/pypi/click-odoo
+
+Credits
+~~~~~~~
+
+Contributors:
+
+- Stéphane Bidoul (ACSONE_)
+- Thomas Binsfeld (ACSONE_)
+- Benjamin Willig (ACSONE_)
+- David Arnold (XOE_)
+
+.. _ACSONE: https://acsone.eu
+.. _XOE: https://xoe.solutions
+
+Maintainer
+~~~~~~~~~~
+
+.. image:: https://www.acsone.eu/logo.png
+   :alt: ACSONE SA/NV
+   :target: https://www.acsone.eu
+
+.. image:: https://erp.xoe.solutions/logo.png
+   :alt: XOE Corp. SAS
+   :target: https://xoe.solutions
+
+This project is co-maintained by ACSONE SA/NV and XOE Copr. SAS.

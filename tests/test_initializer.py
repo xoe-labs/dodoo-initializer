@@ -20,13 +20,10 @@
 # along with this library; if not, see <http://www.gnu.org/licenses/>.
 #
 
-import logging
+# import mock
 
 import click
-import click_odoo
-
+from click.testing import CliRunner
 # from click_odoo import odoo
 
-# from utils import manifest, gitutils
-
-_logger = logging.getLogger(__name__)
+from src.initalizer import main
