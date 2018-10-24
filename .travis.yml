@@ -35,9 +35,24 @@ matrix:
   - env: ODOO="master"
     python: 2.7
 install:
-  - pip install tox-travis
-  - pip install codecov
+- pip install tox-travis
+- pip install codecov
 script:
-  - tox
+- tox
 after_success:
-  - codecov
+- codecov
+jobs:
+  include:
+    - stage: deploy
+      python: 3.6
+      if: tag IS present
+      deploy:
+        provider: pypi
+        user: xoe-labs
+        passwrod:
+          secure: "s0Xtu6SKQiUpPzgbFB6tUUDnduYy7AxDe9t4+SofOL86CI56kIMN0FQZJClV7DbpecNBgzU9LVuiCSFTKOKjDmagaK5c5cn880+CgPMPHvHE00eCyg+ZK2koCPApWTxL11XDZBBLePTaqocFFxGisJghvn3TSzlr1mqDJoUAmtmEgHxnTM1rsTHLzXCbUbUGrehoswzGLU9U3/nOHBoO7gJYJ/NPAqnnU6kstM21koomoLnj4DYaqx0J9BmOhsKr4aI8qeOYk/2gSPd2JAWY4RFxEfnq/3wa+0KSPH/H+PRu6bj+tpu5aFSPPcJ+hQ0bU0ohNgMPTBPZ738xsqAiif5bNIr8pCR5XSrPSiTIrNlBwJXaSM4IussRuDoi5anWaUugdBr6XNz7EtWeoTbsExI9O8ghxN5K5uw+g5/9zkYwl5XQb6Z83VF2x8RqUADrvEWQ7JXH2eUOJQ3J8Of85kMyCJsHCvAM0hsF3V0EDH9CJM6XMzVOarOmDcWpSf8lUEyS8J5ZxJQd2v48yPT9T432l6gBgRyXhBcfm42AWvlPXOoTlsqE2n2iUUzzTKH1RNU5qX01wyGatXy0wNV4EWJ++wcDYNVAuQtyr0AespDYsrMqRvMrnIkSul+dNlQUsgOHs4BXw/0TITvPiFt25b8KXYan/1pDUfRM+dFQTRQ="
+        distributions: sdist bdist_wheel
+        skip_upload_docs: true
+        on:
+          repo: xoe-labs/click-odoo-initializer
+          tags: true
