@@ -1,11 +1,11 @@
 click-odoo-initializer
-==================
+======================
 
 .. image:: https://img.shields.io/badge/license-LGPL--3-blue.svg
    :target: http://www.gnu.org/licenses/lgpl-3.0-standalone.html
    :alt: License: LGPL-3
-.. image:: https://badge.fury.io/py/click-odoo-.svg
-    :target: http://badge.fury.io/py/click-odoo-
+.. image:: https://badge.fury.io/py/click-odoo-initializer.svg
+    :target: http://badge.fury.io/py/click-odoo-initializer
 
 ``click-odoo-initializer`` is a set of useful Odoo maintenance functions.
 They are available as CLI scripts (based on click-odoo_), as well
@@ -62,9 +62,9 @@ Script
 Useful links
 ~~~~~~~~~~~~
 
-- pypi page: https://pypi.org/project/click-odoo-
-- code repository: https://github.com//click-odoo-
-- report issues at: https://github.com//click-odoo-/issues
+- pypi page: https://pypi.org/project/click-odoo-initializer
+- code repository: https://github.com//click-odoo-initializer
+- report issues at: https://github.com//click-odoo-initializer/issues
 
 .. _click-odoo: https://pypi.python.org/pypi/click-odoo
 
