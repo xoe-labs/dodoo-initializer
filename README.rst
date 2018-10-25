@@ -17,7 +17,7 @@ Script
 ~~~~~~
 .. code:: bash
 
-  Usage: click-odoo-initdb [OPTIONS]
+  Usage: click-odoo-initializer [OPTIONS]
 
     Create an Odoo database with pre-installed modules.
 
@@ -71,6 +71,8 @@ Useful links
 Credits
 ~~~~~~~
 
+This project is a fork of `click-odoo-initdb` in [click-odoo-contrib](https://github.com/acsone/click-odoo-contrib), originally written by ACSONE_.
+
 Contributors:
 
 - Stéphane Bidoul (ACSONE_)
@@ -84,12 +86,8 @@ Contributors:
 Maintainer
 ~~~~~~~~~~
 
-.. image:: https://www.acsone.eu/logo.png
-   :alt: ACSONE SA/NV
-   :target: https://www.acsone.eu
-
 .. image:: https://erp.xoe.solutions/logo.png
    :alt: XOE Corp. SAS
    :target: https://xoe.solutions
 
-This project is co-maintained by ACSONE SA/NV and XOE Copr. SAS.
+This project maintained by XOE Copr. SAS.
