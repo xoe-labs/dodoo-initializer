@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# This file is part of the click-odoo-initializer (R) project.
+# This file is part of the dodoo-initializer (R) project.
 # Copyright (c) 2018 ACSONE SA/NV and XOE Corp. SAS
 # Authors: Stéphane Bidoul, Thomas Binsfeld, Benjamin Willig,
 # David Arnold, et al.

@@ -65,5 +65,5 @@ jobs:
         distributions: sdist bdist_wheel
         skip_upload_docs: true
         on:
-          repo: xoe-labs/click-odoo-initializer
+          repo: xoe-labs/dodoo-initializer
           tags: true

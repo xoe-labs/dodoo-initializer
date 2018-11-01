@@ -1,13 +1,13 @@
-click-odoo-initializer
-======================
+dodoo-initializer
+=================
 
 .. image:: https://img.shields.io/badge/license-LGPL--3-blue.svg
    :target: http://www.gnu.org/licenses/lgpl-3.0-standalone.html
    :alt: License: LGPL-3
-.. image:: https://badge.fury.io/py/click-odoo-initializer.svg
-    :target: http://badge.fury.io/py/click-odoo-initializer
+.. image:: https://badge.fury.io/py/dodoo-initializer.svg
+    :target: http://badge.fury.io/py/dodoo-initializer
 
-``click-odoo-initializer`` is a set of useful Odoo maintenance functions.
+``dodoo-initializer`` is a set of useful Odoo maintenance functions.
 They are available as CLI scripts (based on click-odoo_), as well
 as composable python functions.
 
@@ -17,7 +17,7 @@ Script
 ~~~~~~
 .. code:: bash
 
-  Usage: click-odoo-initdb [OPTIONS]
+  Usage: dodoo-initializer [OPTIONS]
 
     Create an Odoo database with pre-installed modules.
 
@@ -62,9 +62,9 @@ Script
 Useful links
 ~~~~~~~~~~~~
 
-- pypi page: https://pypi.org/project/click-odoo-initializer
-- code repository: https://github.com//click-odoo-initializer
-- report issues at: https://github.com//click-odoo-initializer/issues
+- pypi page: https://pypi.org/project/dodoo-initializer
+- code repository: https://github.com//dodoo-initializer
+- report issues at: https://github.com//dodoo-initializer/issues
 
 .. _click-odoo: https://pypi.python.org/pypi/click-odoo
 
