@@ -31,31 +31,37 @@ Script
     corresponding auto_install modules.
 
   Options:
-    -c, --config PATH         ...
-    ...
     -n, --new-database TEXT   Name of new database to create, possibly from
-			      cache. If absent, only the cache trimming
-			      operation is executed.
+                              cache. If absent, only the cache trimming
+                              operation is executed.
     -m, --modules TEXT        Comma separated list of addons to install.
-			      [default: base]
+                              [default: base]
     --demo / --no-demo        Load Odoo demo data.  [default: True]
     --cache / --no-cache      Use a cache of database templates with the exact
-			      same addons installed. Disabling this option also
-			      disables all other cache-related operations such
-			      as max-age or size. Note: when the cache is
-			      enabled, all attachments created during database
-			      initialization are stored in database instead of
-			      the default Odoo file store.  [default: True]
+                              same addons installed. Disabling this option also
+                              disables all other cache-related operations such
+                              as max-age or size. Note: when the cache is
+                              enabled, all attachments created during database
+                              initialization are stored in database instead of
+                              the default Odoo file store.  [default: True]
     --cache-prefix TEXT       Prefix to use when naming cache template databases
-			      (max 8 characters). CAUTION: all databases named
-			      like {prefix}-____________-% will eventually be
-			      dropped by the cache control mechanism, so choose
-			      the prefix wisely.  [default: cache]
+                              (max 8 characters). CAUTION: all databases named
+                              like {prefix}-____________-% will eventually be
+                              dropped by the cache control mechanism, so choose
+                              the prefix wisely.  [default: cache]
     --cache-max-age INTEGER   Drop cache templates that have not been used for
-			      more than N days. Use -1 to disable.  [default:
-			      30]
+                              more than N days. Use -1 to disable.  [default:
+                              30]
     --cache-max-size INTEGER  Keep N most recently used cache templates. Use -1
-			      to disable. Use 0 to empty cache.  [default: 5]
+                              to disable. Use 0 to empty cache.  [default: 5]
+    -c, --config FILE         Specify the Odoo configuration file. Other ways to
+                              provide it are with the ODOO_RC or OPENERP_SERVER
+                              environment variables, or ~/.odoorc (Odoo >= 10)
+                              or ~/.openerp_serverrc.
+    --log-level TEXT          Specify the logging level. Accepted values depend
+                              on the Odoo version, and include debug, info,
+                              warn, error.  [default: info]
+    --logfile FILE            Specify the log file.
     --help                    Show this message and exit.
 
 
