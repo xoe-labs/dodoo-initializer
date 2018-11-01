@@ -219,7 +219,7 @@ def test_dbcache_trim_age(pgdb, dbcache):
         assert dbcache.size == 0
 
 
-def test_create_cmd_cache(dbcache, tmpdir):
+def test_create_cmd_cache(dbcache, tmpdir, mocker):
     assert dbcache.size == 0
     try:
         result = CliRunner().invoke(
@@ -228,7 +228,9 @@ def test_create_cmd_cache(dbcache, tmpdir):
         )
         assert result.exit_code == 0
         assert dbcache.size == 1
-        with click_odoo.OdooEnvironment(database=TEST_DBNAME_NEW) as env:
+        self = mocker.patch("click_odoo.CommandWithOdooEnv")
+        self.database = TEST_DBNAME_NEW
+        with click_odoo.OdooEnvironment(self) as env:
             m = env["ir.module.module"].search(
                 [("name", "=", "auth_signup"), ("state", "=", "installed")]
             )
@@ -290,7 +292,9 @@ def test_create_cmd_cache(dbcache, tmpdir):
         ]
         try:
             subprocess.check_call(cmd)
-            with click_odoo.OdooEnvironment(database=TEST_DBNAME_NEW) as env:
+            self = mocker.patch("click_odoo.CommandWithOdooEnv")
+            self.database = TEST_DBNAME_NEW
+            with click_odoo.OdooEnvironment(self) as env:
                 assert env["ir.module.module"].search(
                     [("name", "=", "addon1")]
                 ), "module addon1 not present in new database"
@@ -298,7 +302,7 @@ def test_create_cmd_cache(dbcache, tmpdir):
             _dropdb(TEST_DBNAME_NEW)
 
 
-def test_create_cmd_nocache(dbcache):
+def test_create_cmd_nocache(dbcache, mocker):
     assert dbcache.size == 0
     try:
         result = CliRunner().invoke(
@@ -306,7 +310,9 @@ def test_create_cmd_nocache(dbcache):
         )
         assert result.exit_code == 0
         assert dbcache.size == 0
-        with click_odoo.OdooEnvironment(database=TEST_DBNAME_NEW) as env:
+        self = mocker.patch("click_odoo.CommandWithOdooEnv")
+        self.database = TEST_DBNAME_NEW
+        with click_odoo.OdooEnvironment(self) as env:
             m = env["ir.module.module"].search(
                 [("name", "=", "auth_signup"), ("state", "=", "installed")]
             )

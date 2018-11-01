@@ -133,7 +133,9 @@ def addons_hash(module_names, with_demo):
 
 
 def refresh_module_list(dbname):
-    with click_odoo.OdooEnvironment(database=dbname) as env:
+    self = click.get_current_context().command
+    self.database = dbname
+    with click_odoo.OdooEnvironment(self) as env:
         env["ir.module.module"].update_list()
 
 
@@ -338,9 +340,10 @@ class DbCache:
                 self._drop_db(datname)
 
 
-@click.command()
-@click_odoo.env_options(
-    default_log_level="warn", with_database=False, with_rollback=False
+@click.command(
+    cls=click_odoo.CommandWithOdooEnv,
+    env_options={"with_database": False, "with_rollback": False},
+    default_overrides={"log_level": "warn"},
 )
 @click.option(
     "--new-database",
