@@ -33,8 +33,8 @@ from click.testing import CliRunner
 
 from src import initializer
 
-TEST_DBNAME = "click-odoo-contrib-testdb"
-TEST_DBNAME_NEW = "click-odoo-contrib-testdb-new"
+TEST_DBNAME = "dodoo-initializer-testdb"
+TEST_DBNAME_NEW = "dodoo-initializer-testdb-new"
 TEST_PREFIX = "tstpfx9"
 TEST_HASH1 = "a" * initializer.DbCache.HASH_SIZE
 TEST_HASH2 = "b" * initializer.DbCache.HASH_SIZE
