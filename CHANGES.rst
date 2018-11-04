@@ -5,6 +5,6 @@ Changes
 .. ----------
 .. -
 
-0.0.1 (yyyy-mm-dd)
+0.5.0 (2018-11-04)
 --------------------
-- Start of project
+- First dodoo release
