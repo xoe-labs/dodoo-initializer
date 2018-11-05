@@ -10,10 +10,11 @@ NC='\033[0m' # No Color
 SNIPPET="""
   - stage: deploy
     python: 3.6
+    env: TOXENV=deploy
     deploy:
       provider: pypi
       user: \"{{ PYPI_USER }}\"
-      passwrod:
+      password:
         secure: "\$PYPI_TOKEN"
       distributions: \"sdist bdist_wheel\"
       skip_upload_docs: true
