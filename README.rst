@@ -69,8 +69,8 @@ Useful links
 ~~~~~~~~~~~~
 
 - pypi page: https://pypi.org/project/dodoo-initializer
-- code repository: https://github.com//dodoo-initializer
-- report issues at: https://github.com//dodoo-initializer/issues
+- code repository: https://github.com/xoe-labs/dodoo-initializer
+- report issues at: https://github.com/xoe-labs/dodoo-initializer/issues
 
 .. _click-odoo: https://pypi.python.org/pypi/click-odoo
 
