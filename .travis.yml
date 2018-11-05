@@ -3,10 +3,10 @@ cache: pip
 addons:
   postgresql: '9.6'
 stages:
-  - name: linting
-  - name: test
-  - name: deploy
-    if: tag IS present
+- name: linting
+- name: test
+- name: deploy
+  if: tag IS present
 python:
 - 2.7
 - 3.5
@@ -19,6 +19,8 @@ env:
   - ODOO="11.0"
   - ODOO="12.0"
   - ODOO="master"
+  global:
+    secure: w8heQH47y0/trzq5dJjpuuZsGQITOCKGLMIR7Au8cuka8OEPN+a9Ay6oSHSi2/uY14nFdjzaD/dV+kxmCZgREF6iuVaGnFWl0ZQjZK02iUqAmHFa2wNj9hNP527XIS35s7VqUiR8caluCwoVeIoKKyf/pzQh1/ZXK/doEER5oESRG5ciETw+7/2h0ALIAgHCsaVdwTDO6/ju24mv1hkYH69qZdUWdEdpVz3e35u6vT+X1gGK5P9vfH3alQTHpuPrDI8Cf+H6vO/K/QdgGSGMyFWw3VKsjFOQDO5OqDF5ZEu6sVqFogo2nYN3ra9/wVx9WwBZ0HiG4fPr0MmwMaSje6C8uuZ8PfWAOzT3uwoiLSyy3coAe+GX2zoEGsa7YeG4DETQEm6glwkd99WvGq6qtIpW01ubUPVI6fXoaFkjr3Y+/ACwjzYdZwGAgBUbja5WVDSq2qJYf1V+Ou6WGuZ9X4nN7xOGNw02+Ru7QWB2Q0HCnofrE5nntBypSQWnjxnMDa+c3+XK4yncDCOHBybU7rvYGJJ5uIX3i/6n7e90OUipgzevIeA5b1c6ldJjehHoFqKa+jO3/krVL/Sj3QhX/vUn9jYNRxeMLm33434ehJzmpg5/kZy3+benWuAZosDx4qOh7TJvbtXF6SJGjTGfhGnvjliAiat8p/QMX+P0/94=
 matrix:
   exclude:
   - env: ODOO="8.0"
@@ -61,7 +63,7 @@ jobs:
         provider: pypi
         user: xoe-labs
         passwrod:
-          secure: "s0Xtu6SKQiUpPzgbFB6tUUDnduYy7AxDe9t4+SofOL86CI56kIMN0FQZJClV7DbpecNBgzU9LVuiCSFTKOKjDmagaK5c5cn880+CgPMPHvHE00eCyg+ZK2koCPApWTxL11XDZBBLePTaqocFFxGisJghvn3TSzlr1mqDJoUAmtmEgHxnTM1rsTHLzXCbUbUGrehoswzGLU9U3/nOHBoO7gJYJ/NPAqnnU6kstM21koomoLnj4DYaqx0J9BmOhsKr4aI8qeOYk/2gSPd2JAWY4RFxEfnq/3wa+0KSPH/H+PRu6bj+tpu5aFSPPcJ+hQ0bU0ohNgMPTBPZ738xsqAiif5bNIr8pCR5XSrPSiTIrNlBwJXaSM4IussRuDoi5anWaUugdBr6XNz7EtWeoTbsExI9O8ghxN5K5uw+g5/9zkYwl5XQb6Z83VF2x8RqUADrvEWQ7JXH2eUOJQ3J8Of85kMyCJsHCvAM0hsF3V0EDH9CJM6XMzVOarOmDcWpSf8lUEyS8J5ZxJQd2v48yPT9T432l6gBgRyXhBcfm42AWvlPXOoTlsqE2n2iUUzzTKH1RNU5qX01wyGatXy0wNV4EWJ++wcDYNVAuQtyr0AespDYsrMqRvMrnIkSul+dNlQUsgOHs4BXw/0TITvPiFt25b8KXYan/1pDUfRM+dFQTRQ="
+          secure: "$PYPI_TOKEN"
         distributions: sdist bdist_wheel
         skip_upload_docs: true
         on:
