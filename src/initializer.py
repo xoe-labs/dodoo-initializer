@@ -41,11 +41,6 @@ _logger = logging.getLogger(__name__)
 EXCLUDE_PATTERNS = ("*.pyc", "*.pyo")
 
 
-def check_dbname(dbname):
-    if not re.match("^[A-Za-z][A-Za-z0-9-]*$", dbname):
-        raise click.ClickException("Invalid database name '{}'".format(dbname))
-
-
 def check_cache_prefix(cache_prefix):
     if not re.match("^[A-Za-z][A-Za-z0-9-]{0,7}$", cache_prefix):
         raise click.ClickException(
@@ -418,8 +413,6 @@ def main(
     checksum of modules provided with the -m option, including their
     dependencies and corresponding auto_install modules.
     """
-    if new_database:
-        check_dbname(new_database)
     module_names = [m.strip() for m in modules.split(",")]
     if not cache:
         if new_database:
