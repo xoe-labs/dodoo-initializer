@@ -5,6 +5,10 @@ Changes
 .. ----------
 .. -
 
+0.6.0 (2019-01-24)
+------------------
+- Refactor to dodoo plugin
+
 0.5.2 (2019-01-22)
 ------------------
 - Do not limit db regex: quoted identifiers have no limiting spec.

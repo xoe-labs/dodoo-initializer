@@ -30,8 +30,8 @@ from datetime import datetime, timedelta
 from fnmatch import fnmatch
 
 import click
-import click_odoo
-from click_odoo import odoo
+import dodoo
+from dodoo import odoo
 
 from utils.manifest import expand_dependencies
 
@@ -130,7 +130,7 @@ def addons_hash(module_names, with_demo):
 def refresh_module_list(dbname):
     self = click.get_current_context().command
     self.database = dbname
-    with click_odoo.OdooEnvironment(self) as env:
+    with dodoo.OdooEnvironment(self) as env:
         env["ir.module.module"].update_list()
 
 
@@ -335,15 +335,8 @@ class DbCache:
                 self._drop_db(datname)
 
 
-@click.command(
-    cls=click_odoo.CommandWithOdooEnv,
-    env_options={
-        "with_database": False,
-        "with_rollback": False,
-        "with_addons_path": True,
-    },
-    default_overrides={"log_level": "warn"},
-)
+@click.command(cls=dodoo.CommandWithOdooEnv)
+@dodoo.options.addons_path_opt(True)
 @click.option(
     "--new-database",
     "-n",
@@ -399,7 +392,7 @@ class DbCache:
     help="Keep N most recently used cache templates. Use "
     "-1 to disable. Use 0 to empty cache.",
 )
-def main(
+def init(
     env, new_database, modules, demo, cache, cache_prefix, cache_max_age, cache_max_size
 ):
     """ Create an Odoo database with pre-installed modules.
@@ -444,4 +437,4 @@ def main(
 
 
 if __name__ == "__main__":  # pragma: no cover
-    main()
+    init()

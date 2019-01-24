@@ -19,10 +19,7 @@ setup(
     use_scm_version=True,
     packages=find_packages(),
     setup_requires=["setuptools-scm"],
-    install_requires=["click-odoo>=2.0.0.rc2"],
-    dependency_links=[
-        "git+https://github.com/xoe-labs/click-odoo.git@2.0.0#egg=click-odoo"
-    ],
+    install_requires=["dodoo>=2.0.0.rc7"],
     license="LGPLv3+",
     author="XOE Labs",
     author_email="info@xoe.solutions",
@@ -39,7 +36,7 @@ setup(
         "Framework :: Odoo",
     ],
     entry_points="""
-        [console_scripts]
-        dodoo-initializer=src.initializer:main
+        [core_package.cli_plugins]
+        init=src.initializer:init
     """,
 )

@@ -26,7 +26,7 @@ import sys
 import textwrap
 from datetime import datetime, timedelta
 
-import click_odoo
+import dodoo
 import mock
 import pytest
 from click.testing import CliRunner
@@ -44,8 +44,8 @@ TODAY_MINUS_2 = datetime(2018, 5, 8)
 TODAY_MINUS_4 = datetime(2018, 5, 6)
 ADDONS_PATH = ",".join(
     [
-        os.path.join(click_odoo.odoo.__path__[0], "addons"),
-        os.path.join(click_odoo.odoo.__path__[0], "..", "addons"),
+        os.path.join(dodoo.odoo.__path__[0], "addons"),
+        os.path.join(dodoo.odoo.__path__[0], "..", "addons"),
         os.path.join(os.path.dirname(__file__), "data", "test_initializer"),
     ]
 )
@@ -114,7 +114,7 @@ def test_dbcache_trim_size(pgdb, dbcache):
     dbcache.trim_size(max_size=2)
     assert dbcache.size == 2
     result = CliRunner().invoke(
-        initializer.main,
+        initializer.init,
         [
             "--cache-prefix",
             TEST_PREFIX,
@@ -124,10 +124,10 @@ def test_dbcache_trim_size(pgdb, dbcache):
             "-1",
         ],
     )
-    assert result.exit_code == 0
+    assert result.exit_code == 0, result.output
     assert dbcache.size == 2
     result = CliRunner().invoke(
-        initializer.main,
+        initializer.init,
         [
             "--cache-prefix",
             TEST_PREFIX,
@@ -137,10 +137,10 @@ def test_dbcache_trim_size(pgdb, dbcache):
             "-1",
         ],
     )
-    assert result.exit_code == 0
+    assert result.exit_code == 0, result.output
     assert dbcache.size == 1
     result = CliRunner().invoke(
-        initializer.main,
+        initializer.init,
         [
             "--cache-prefix",
             TEST_PREFIX,
@@ -150,7 +150,7 @@ def test_dbcache_trim_size(pgdb, dbcache):
             "-1",
         ],
     )
-    assert result.exit_code == 0
+    assert result.exit_code == 0, result.output
     assert dbcache.size == 0
 
 
@@ -177,7 +177,7 @@ def test_dbcache_trim_age(pgdb, dbcache):
         assert dbcache.size == 2
         # do nothing
         result = CliRunner().invoke(
-            initializer.main,
+            initializer.init,
             [
                 "--cache-prefix",
                 TEST_PREFIX,
@@ -187,11 +187,11 @@ def test_dbcache_trim_age(pgdb, dbcache):
                 "-1",
             ],
         )
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.output
         assert dbcache.size == 2
         # drop older than 1 day, drop one
         result = CliRunner().invoke(
-            initializer.main,
+            initializer.init,
             [
                 "--cache-prefix",
                 TEST_PREFIX,
@@ -201,11 +201,11 @@ def test_dbcache_trim_age(pgdb, dbcache):
                 "1",
             ],
         )
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.output
         assert dbcache.size == 1
         # drop today too, drop everything
         result = CliRunner().invoke(
-            initializer.main,
+            initializer.init,
             [
                 "--cache-prefix",
                 TEST_PREFIX,
@@ -215,7 +215,7 @@ def test_dbcache_trim_age(pgdb, dbcache):
                 "0",
             ],
         )
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.output
         assert dbcache.size == 0
 
 
@@ -223,14 +223,14 @@ def test_create_cmd_cache(dbcache, tmpdir, mocker):
     assert dbcache.size == 0
     try:
         result = CliRunner().invoke(
-            initializer.main,
+            initializer.init,
             ["--cache-prefix", TEST_PREFIX, "-n", TEST_DBNAME_NEW, "-m", "auth_signup"],
         )
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.output
         assert dbcache.size == 1
-        self = mocker.patch("click_odoo.CommandWithOdooEnv")
+        self = mocker.patch("dodoo.CommandWithOdooEnv")
         self.database = TEST_DBNAME_NEW
-        with click_odoo.OdooEnvironment(self) as env:
+        with dodoo.OdooEnvironment(self) as env:
             m = env["ir.module.module"].search(
                 [("name", "=", "auth_signup"), ("state", "=", "installed")]
             )
@@ -248,7 +248,7 @@ def test_create_cmd_cache(dbcache, tmpdir, mocker):
     with mock.patch.object(initializer, "odoo_createdb") as m:
         try:
             result = CliRunner().invoke(
-                initializer.main,
+                initializer.init,
                 [
                     "--cache-prefix",
                     TEST_PREFIX,
@@ -258,7 +258,7 @@ def test_create_cmd_cache(dbcache, tmpdir, mocker):
                     "auth_signup",
                 ],
             )
-            assert result.exit_code == 0
+            assert result.exit_code == 0, result.output
             assert m.call_count == 0
             assert dbcache.size == 1
         finally:
@@ -292,27 +292,30 @@ def test_create_cmd_cache(dbcache, tmpdir, mocker):
         ]
         try:
             subprocess.check_call(cmd)
-            self = mocker.patch("click_odoo.CommandWithOdooEnv")
+            self = mocker.patch("dodoo.CommandWithOdooEnv")
             self.database = TEST_DBNAME_NEW
-            with click_odoo.OdooEnvironment(self) as env:
+            with dodoo.OdooEnvironment(self) as env:
                 assert env["ir.module.module"].search(
                     [("name", "=", "addon1")]
                 ), "module addon1 not present in new database"
         finally:
             _dropdb(TEST_DBNAME_NEW)
 
+    # Reset side-effects
+    initializer.init.database = False
+
 
 def test_create_cmd_nocache(dbcache, mocker):
     assert dbcache.size == 0
     try:
         result = CliRunner().invoke(
-            initializer.main, ["--no-cache", "-n", TEST_DBNAME_NEW, "-m", "auth_signup"]
+            initializer.init, ["--no-cache", "-n", TEST_DBNAME_NEW, "-m", "auth_signup"]
         )
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.output
         assert dbcache.size == 0
-        self = mocker.patch("click_odoo.CommandWithOdooEnv")
+        self = mocker.patch("dodoo.CommandWithOdooEnv")
         self.database = TEST_DBNAME_NEW
-        with click_odoo.OdooEnvironment(self) as env:
+        with dodoo.OdooEnvironment(self) as env:
             m = env["ir.module.module"].search(
                 [("name", "=", "auth_signup"), ("state", "=", "installed")]
             )

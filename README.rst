@@ -8,7 +8,7 @@ dodoo-initializer
     :target: http://badge.fury.io/py/dodoo-initializer
 
 ``dodoo-initializer`` is a set of useful Odoo maintenance functions.
-They are available as CLI scripts (based on click-odoo_), as well
+They are available as CLI scripts (based on dodoo_), as well
 as composable python functions.
 
 .. contents::
@@ -72,7 +72,7 @@ Useful links
 - code repository: https://github.com/xoe-labs/dodoo-initializer
 - report issues at: https://github.com/xoe-labs/dodoo-initializer/issues
 
-.. _click-odoo: https://pypi.python.org/pypi/click-odoo
+.. _dodoo: https://pypi.python.org/pypi/dodoo
 
 Credits
 ~~~~~~~
