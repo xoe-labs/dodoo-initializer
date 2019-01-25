@@ -38,5 +38,7 @@ setup(
     entry_points="""
         [core_package.cli_plugins]
         init=src.initializer:init
+        copy=src.copier:copy
+        backup=src.backuper:backup
     """,
 )
