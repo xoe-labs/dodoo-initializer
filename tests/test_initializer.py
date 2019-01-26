@@ -333,6 +333,29 @@ def test_create_cmd_nocache(dbcache, mocker):
         _dropdb(TEST_DBNAME_NEW)
 
 
+def test_rawsql(dbcache, mocker):
+    assert dbcache.size == 0
+    try:
+        result = CliRunner().invoke(
+            initializer.init,
+            [
+                "--no-cache",
+                "-n",
+                TEST_DBNAME_NEW,
+                """UPDATE res_company SET name='hello' WHERE id=1""",
+            ],
+        )
+        assert result.exit_code == 0, result.output
+        assert dbcache.size == 0
+        self = mocker.patch("dodoo.CommandWithOdooEnv")
+        self.database = TEST_DBNAME_NEW
+        with dodoo.OdooEnvironment(self) as env:
+            c = env["res.company"].browse([1])
+            assert c.name == "hello", "company was not renamed from rawsql"
+    finally:
+        _dropdb(TEST_DBNAME_NEW)
+
+
 def test_dbcache_add_concurrency(pgdb, dbcache):
     assert dbcache.size == 0
     dbcache.add(pgdb, TEST_HASH1)

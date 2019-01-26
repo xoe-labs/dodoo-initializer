@@ -35,6 +35,8 @@ from dodoo import odoo
 
 from utils.manifest import expand_dependencies
 
+from ._dbutils import pg_connect
+
 _logger = logging.getLogger(__name__)
 
 
@@ -392,8 +394,17 @@ class DbCache:
     help="Keep N most recently used cache templates. Use "
     "-1 to disable. Use 0 to empty cache.",
 )
+@click.argument("rawsql", required=False)
 def init(
-    env, new_database, modules, demo, cache, cache_prefix, cache_max_age, cache_max_size
+    env,
+    new_database,
+    modules,
+    demo,
+    cache,
+    cache_prefix,
+    cache_max_age,
+    cache_max_size,
+    rawsql,
 ):
     """ Create an Odoo database with pre-installed modules.
 
@@ -434,6 +445,11 @@ def init(
                 dbcache.trim_size(cache_max_size)
             if cache_max_age >= 0:
                 dbcache.trim_age(timedelta(days=cache_max_age))
+
+    if rawsql:
+        with pg_connect(new_database) as cr:
+            cr.execute(rawsql)
+            click.secho("RAW sql statment loaded! ✨ 🍰 ✨", fg="green", bold=True)
 
 
 if __name__ == "__main__":  # pragma: no cover

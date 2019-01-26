@@ -43,7 +43,8 @@ def _copy_filestore(source, dest):
 )
 @click.argument("source", required=True)
 @click.argument("dest", required=True)
-def copy(env, source, dest, force_disconnect, modules):
+@click.argument("rawsql", required=False)
+def copy(env, source, dest, force_disconnect, modules, rawsql):
     """ Create an Odoo database by copying an existing one.
 
     This script copies using postgres CREATEDB WITH TEMPLATE.
@@ -70,6 +71,12 @@ def copy(env, source, dest, force_disconnect, modules):
             Registry = odoo.modules.registry.Registry
         Registry.new(dest, force_demo=False, update_module=True)
         odoo.sql_db.close_db(dest)
+        click.secho("Additional modules loaded! ✨ 🍰 ✨", fg="green", bold=True)
+
+    if rawsql:
+        with pg_connect(dest) as cr:
+            cr.execute(rawsql)
+            click.secho("RAW sql statment loaded! ✨ 🍰 ✨", fg="green", bold=True)
 
 
 if __name__ == "__main__":  # pragma: no cover

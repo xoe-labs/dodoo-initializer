@@ -8,8 +8,8 @@ from dodoo import odoo
 
 
 @contextmanager
-def pg_connect():
-    conn = odoo.sql_db.db_connect("postgres")
+def pg_connect(dbname="postgres"):
+    conn = odoo.sql_db.db_connect(dbname)
     cr = conn.cursor()
     cr.autocommit(True)
     try:

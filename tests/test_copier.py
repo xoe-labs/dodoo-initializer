@@ -62,7 +62,7 @@ def tests_copydb(pgdb, filestore):
             shutil.rmtree(filestore_dir_new)
 
 
-def tests_module_install(pgdb, filestore, mocker):
+def tests_module_install_and_raw_sql(pgdb, filestore, mocker):
     filestore_dir_new = odoo.tools.config.filestore(TEST_DBNAME_NEW)
     try:
         assert not db_exists(TEST_DBNAME_NEW)
@@ -75,6 +75,7 @@ def tests_module_install(pgdb, filestore, mocker):
                 "auth_signup",
                 TEST_DBNAME,
                 TEST_DBNAME_NEW,
+                """UPDATE res_company SET name='hello' WHERE id=1""",
             ],
         )
         assert result.exit_code == 0, result.output
@@ -85,6 +86,8 @@ def tests_module_install(pgdb, filestore, mocker):
                 [("name", "=", "auth_signup"), ("state", "=", "installed")]
             )
             assert m, "auth_signup module not installed"
+            c = env["res.company"].browse([1])
+            assert c.name == "hello", "company was not renamed from rawsql"
         assert os.path.isdir(filestore_dir_new)
     finally:
         _dropdb(TEST_DBNAME_NEW)
