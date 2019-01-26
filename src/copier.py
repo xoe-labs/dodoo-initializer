@@ -35,9 +35,15 @@ def _copy_filestore(source, dest):
     is_flag=True,
     help="Attempt to disconnect users from the template database.",
 )
+@click.option(
+    "--modules",
+    "-m",
+    show_default=True,
+    help="Comma separated list of addons to install.",
+)
 @click.argument("source", required=True)
 @click.argument("dest", required=True)
-def copy(env, source, dest, force_disconnect):
+def copy(env, source, dest, force_disconnect, modules):
     """ Create an Odoo database by copying an existing one.
 
     This script copies using postgres CREATEDB WITH TEMPLATE.
@@ -54,6 +60,16 @@ def copy(env, source, dest, force_disconnect):
             terminate_connections(source)
         _copy_db(cr, source, dest)
     _copy_filestore(source, dest)
+
+    module_names = [m.strip() for m in modules.split(",")]
+    if module_names:
+        odoo.tools.config["init"] = dict.fromkeys(module_names, 1)
+        if odoo.release.version_info[0] < 10:
+            Registry = odoo.modules.registry.RegistryManager
+        else:
+            Registry = odoo.modules.registry.Registry
+        Registry.new(dest, force_demo=False, update_module=True)
+        odoo.sql_db.close_db(dest)
 
 
 if __name__ == "__main__":  # pragma: no cover

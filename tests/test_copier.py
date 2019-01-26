@@ -5,6 +5,7 @@ import os
 import shutil
 import subprocess
 
+import dodoo
 import pytest
 from click.testing import CliRunner
 from dodoo import odoo
@@ -54,6 +55,36 @@ def tests_copydb(pgdb, filestore):
         assert result.exit_code == 0, result.output
         # this dropdb will indirectly test that the new db exists
         subprocess.check_call(["dropdb", TEST_DBNAME_NEW])
+        assert os.path.isdir(filestore_dir_new)
+    finally:
+        _dropdb(TEST_DBNAME_NEW)
+        if os.path.isdir(filestore_dir_new):
+            shutil.rmtree(filestore_dir_new)
+
+
+def tests_module_install(pgdb, filestore, mocker):
+    filestore_dir_new = odoo.tools.config.filestore(TEST_DBNAME_NEW)
+    try:
+        assert not db_exists(TEST_DBNAME_NEW)
+        assert not os.path.exists(filestore_dir_new)
+        result = CliRunner().invoke(
+            copy,
+            [
+                "--force-disconnect",
+                "--modules",
+                "auth_signup",
+                TEST_DBNAME,
+                TEST_DBNAME_NEW,
+            ],
+        )
+        assert result.exit_code == 0, result.output
+        self = mocker.patch("dodoo.CommandWithOdooEnv")
+        self.database = TEST_DBNAME_NEW
+        with dodoo.OdooEnvironment(self) as env:
+            m = env["ir.module.module"].search(
+                [("name", "=", "auth_signup"), ("state", "=", "installed")]
+            )
+            assert m, "auth_signup module not installed"
         assert os.path.isdir(filestore_dir_new)
     finally:
         _dropdb(TEST_DBNAME_NEW)
