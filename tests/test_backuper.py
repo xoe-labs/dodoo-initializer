@@ -4,7 +4,6 @@
 import os
 import shutil
 import subprocess
-import zipfile
 from filecmp import dircmp
 
 import pytest
@@ -67,13 +66,19 @@ def manifest():
 
 
 def _check_backup(backup_dir):
-    assert os.path.exists(os.path.join(backup_dir, "dump.sql")) or os.path.exists(
-        os.path.join(backup_dir, "db.dump")
+    assert os.path.exists(
+        os.path.join(backuper._latest_snapshot(backup_dir), "dump.sql")
+    ) or os.path.exists(os.path.join(backuper._latest_snapshot(backup_dir), "db.dump"))
+    assert os.path.exists(
+        os.path.join(
+            backuper._latest_snapshot(backup_dir),
+            "filestore",
+            *TEST_FILESTORE_FILE.split("/")[1:]
+        )
     )
     assert os.path.exists(
-        os.path.join(backup_dir, "filestore", *TEST_FILESTORE_FILE.split("/")[1:])
+        os.path.join(backuper._latest_snapshot(backup_dir), "manifest.json")
     )
-    assert os.path.exists(os.path.join(backup_dir, "manifest.json"))
 
 
 def _compare_filestore(dbname1, dbname2):
@@ -89,28 +94,11 @@ def _compare_filestore(dbname1, dbname2):
     assert not diff.diff_files
 
 
-def tests_backupdb_zip(pgdb, filestore, tmp_path, manifest):
-    zip_path = tmp_path.joinpath("test.zip")
-    assert not zip_path.exists()
-    zip_filename = zip_path.as_posix()
-    result = CliRunner().invoke(
-        backuper.backup, ["--format=zip", TEST_DBNAME, zip_filename]
-    )
-    assert result.exit_code == 0, result.output
-    assert zip_path.exists()
-    extract_dir = tmp_path.joinpath("extract_dir").as_posix()
-    with zipfile.ZipFile(zip_filename) as zfile:
-        zfile.extractall(extract_dir)
-    _check_backup(extract_dir)
-
-
 def tests_backupdb_folder(pgdb, filestore, tmp_path, manifest):
     backup_path = tmp_path.joinpath("backup2")
     assert not backup_path.exists()
     backup_dir = backup_path.as_posix()
-    result = CliRunner().invoke(
-        backuper.backup, ["--format=folder", TEST_DBNAME, backup_dir]
-    )
+    result = CliRunner().invoke(backuper.snapshot, [TEST_DBNAME, backup_dir])
     assert result.exit_code == 0, result.output
     assert backup_path.exists()
     _check_backup(backup_dir)
@@ -118,58 +106,9 @@ def tests_backupdb_folder(pgdb, filestore, tmp_path, manifest):
 
 def tests_backupdb_not_exists():
     assert not db_exists(TEST_DBNAME)
-    result = CliRunner().invoke(backuper.backup, [TEST_DBNAME, "out"])
+    result = CliRunner().invoke(backuper.snapshot, [TEST_DBNAME, "out"])
     assert result.exit_code != 0
     assert "Database does not exist" in result.output
-
-
-def tests_backupdb_force_folder(pgdb, filestore, tmp_path, manifest):
-    backup_dir = tmp_path.as_posix()
-    result = CliRunner().invoke(
-        backuper.backup, ["--format=folder", TEST_DBNAME, backup_dir]
-    )
-    assert result.exit_code != 0
-    assert "Destination already exist" in result.output
-    result = CliRunner().invoke(
-        backuper.backup, ["--format=folder", "--force", TEST_DBNAME, backup_dir]
-    )
-    assert result.exit_code == 0, result.output
-    assert "Destination already exist" in result.output
-
-
-def tests_backupdb_force_zip(pgdb, filestore, tmp_path, manifest):
-    zip_path = tmp_path.joinpath("test.zip")
-    zip_path.write_text(u"empty")
-    zip_filename = zip_path.as_posix()
-    result = CliRunner().invoke(
-        backuper.backup, ["--format=zip", TEST_DBNAME, zip_filename]
-    )
-    assert result.exit_code != 0
-    assert "Destination already exist" in result.output
-    result = CliRunner().invoke(
-        backuper.backup, ["--format=zip", "--force", TEST_DBNAME, zip_filename]
-    )
-    assert result.exit_code == 0, result.output
-    assert "Destination already exist" in result.output
-
-
-def tests_backupdb_zip_restore(odoodb, odoocfg, tmp_path):
-    """Test zip backup compatibility with native Odoo restore API
-    """
-    zip_path = tmp_path.joinpath("test.zip")
-    zip_filename = zip_path.as_posix()
-    result = CliRunner().invoke(backuper.backup, ["--format=zip", odoodb, zip_filename])
-    assert result.exit_code == 0, result.output
-    assert zip_path.exists()
-    try:
-        assert not db_exists(TEST_DBNAME)
-        with odoo.api.Environment.manage():
-            odoo.service.db.restore_db(TEST_DBNAME, zip_filename, copy=True)
-            odoo.sql_db.close_db(TEST_DBNAME)
-        assert db_exists(TEST_DBNAME)
-        _compare_filestore(odoodb, TEST_DBNAME)
-    finally:
-        _dropdb_odoo(TEST_DBNAME)
 
 
 def tests_backupdb_folder_restore(odoodb, odoocfg, tmp_path):
@@ -179,14 +118,12 @@ def tests_backupdb_folder_restore(odoodb, odoocfg, tmp_path):
     backup_path = tmp_path.joinpath("backup")
     assert not backup_path.exists()
     backup_dir = backup_path.as_posix()
-    result = CliRunner().invoke(
-        backuper.backup, ["--format=folder", odoodb, backup_dir]
-    )
+    result = CliRunner().invoke(backuper.snapshot, [odoodb, backup_dir])
     assert result.exit_code == 0, result.output
     assert backup_path.exists()
     try:
         assert not db_exists(TEST_DBNAME)
-        dumpfile = os.path.join(backup_dir, "db.dump")
+        dumpfile = os.path.join(backuper._latest_snapshot(backup_dir), "db.dump")
         with odoo.api.Environment.manage():
             odoo.service.db.restore_db(TEST_DBNAME, dumpfile, copy=True)
             odoo.sql_db.close_db(TEST_DBNAME)

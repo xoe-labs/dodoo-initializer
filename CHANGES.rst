@@ -5,6 +5,22 @@ Changes
 .. ----------
 .. -
 
+0.6.2 (2019-01-29)
+------------------
+- Add module install to copy command. This is useful for installing
+  test instance overlays.
+- Add rawsql execution to init + copy. This can be useful to template
+  basic database seeding programatically.
+- Refactor backup to snapshotting command leveraging rsync.
+
+0.6.1 (2019-01-25)
+------------------
+- Include copy + backup commands
+- Coerce backup command to only include public schema on pg_dump. This ensures
+  restoring in a scenario where the db user is not superuser role
+  and an EXTENSION was installed. Anything other than in the public scheme
+  will not be exported.
+
 0.6.0 (2019-01-24)
 ------------------
 - Refactor to dodoo plugin

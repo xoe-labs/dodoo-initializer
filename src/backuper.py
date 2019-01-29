@@ -11,9 +11,14 @@ import tempfile
 import click
 import dodoo
 from dodoo import odoo
+from snapshotter import snapshotter
 
 from ._backup import backup as do_backup
 from ._dbutils import db_exists
+
+
+def _latest_snapshot(path):
+    return os.path.join(path, "latest.snapshot")
 
 
 def _dump_db(dbname, _backup):
@@ -42,22 +47,29 @@ def _backup_filestore(dbname, _backup):
 
 @click.command(cls=dodoo.CommandWithOdooEnv)
 @click.option(
-    "--force",
-    is_flag=True,
+    "--min-snapshots",
+    type=int,
+    default=7,
     show_default=True,
-    help="Don't report error if destination file/folder already exists.",
+    help="Minimum number of snapshots",
 )
 @click.option(
-    "--format",
-    type=click.Choice(["zip", "folder"]),
-    default="zip",
+    "--max-snapshots",
+    type=int,
+    default=10,
     show_default=True,
-    help="Expected dump format",
+    help="Maximum number of snapshots",
+)
+@click.option(
+    "--unless-absent",
+    default=False,
+    show_default=True,
+    help="Create destination directory unless it's abent",
 )
 @click.argument("dbname", nargs=1)
 @click.argument("dest", nargs=1, required=1)
-def backup(env, force, format, dbname, dest):
-    """ Create an Odoo database backup from an existing one.
+def snapshot(env, min_snapshots, max_snapshots, unless_absent, dbname, dest):
+    """ Create an Odoo database snapshot from an existing one.
 
     This script dumps the database using pg_dump.
     It also copies the filestore.
@@ -67,36 +79,40 @@ def backup(env, force, format, dbname, dest):
     avoids timeout and file size limitation problems when
     databases are too large.
 
-    It also allows you to make a backup directly to a directory.
-    This type of backup has the advantage that it reduces
-    memory consumption since the files in the filestore are
-    directly copied to the target directory as well as the
-    database dump.
+    It also creates and maintains the specified amount of
+    snapshots in the target directory. The snapshot
+    implementaiton uses rsync. It hardlinks files that did not
+    change. This can save a lot of disk space and bandwith
+    especially for filestore items.
+
+    (TBD) You can define a ssh destination.
 
     """
+    if not shutil.which("rsync"):
+        msg = "rsync binary not found in path."
+        raise click.ClickException(msg)
     if not db_exists(dbname):
         msg = "Database does not exist: {}".format(dbname)
         raise click.ClickException(msg)
-    if os.path.exists(dest):
-        msg = "Destination already exist: {}".format(dest)
-        if not force:
-            raise click.ClickException(msg)
-        else:
-            msg = "\n".join([msg, "Remove {}".format(dest)])
-            click.echo(click.style(msg, fg="yellow"))
-            if os.path.isfile(dest):
-                os.unlink(dest)
-            else:
-                shutil.rmtree(dest)
+    if not os.path.exists(dest) and unless_absent:
+        msg = "Destination does not exist: {}".format(dest)
+        raise click.ClickException(msg)
+    elif not os.path.exists(dest):
+        os.makedirs(dest)
+    if max_snapshots <= min_snapshots:
+        msg = "--max-snapshots must be greater than --min-snapshots"
+        raise click.ClickException(msg)
     db = odoo.sql_db.db_connect(dbname)
     try:
-        with do_backup(format, dest, "w") as _backup, db.cursor() as cr:
-            _create_manifest(cr, dbname, _backup)
-            _backup_filestore(dbname, _backup)
-            _dump_db(dbname, _backup)
+        with odoo.tools.osutil.tempdir() as temp_dir:
+            with do_backup("folder", temp_dir, "w") as _backup, db.cursor() as cr:
+                _create_manifest(cr, dbname, _backup)
+                _backup_filestore(dbname, _backup)
+                _dump_db(dbname, _backup)
+            snapshotter.snapshot(temp_dir, dest, False, min_snapshots, max_snapshots)
     finally:
         odoo.sql_db.close_db(dbname)
 
 
 if __name__ == "__main__":  # pragma: no cover
-    backup()
+    snapshot()

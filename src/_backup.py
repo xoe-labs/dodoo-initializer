@@ -98,14 +98,13 @@ class FolderBackup(AbstractBackup):
 
     def __init__(self, path, mode):
         super(FolderBackup, self).__init__(path, mode)
-        os.mkdir(self._path)
 
     def addtree(self, src, arcname):
         dest = os.path.join(self._path, arcname)
         shutil.copytree(src, dest)
 
     def addfile(self, filename, arcname):
-        shutil.copyfile(filename, os.path.join(self._path, arcname))
+        shutil.copy2(filename, os.path.join(self._path, arcname))
 
     def write(self, stream, arcname):
         with open(os.path.join(self._path, arcname), "wb") as f:
