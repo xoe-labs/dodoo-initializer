@@ -5,6 +5,12 @@ Changes
 .. ----------
 .. -
 
+0.6.5 (2019-05-05)
+------------------
+- Simplify repo structure
+- Fix package namespace issues
+
+
 0.6.2 (2019-01-29)
 ------------------
 - Add module install to copy command. This is useful for installing
