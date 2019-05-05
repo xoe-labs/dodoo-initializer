@@ -10,8 +10,8 @@ import pytest
 from click.testing import CliRunner
 from dodoo import odoo
 
-from src._dbutils import db_exists
-from src.copier import copy
+from dodoo_dbhandler._dbutils import db_exists
+from dodoo_dbhandler.copier import copy
 
 TEST_DBNAME = "dodoo-cruder-testcopydb"
 TEST_DBNAME_NEW = "dodoo-cruder-testcopydb-new"

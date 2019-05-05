@@ -10,8 +10,8 @@ import pytest
 from click.testing import CliRunner
 from dodoo import odoo
 
-from src import backuper
-from src._dbutils import db_exists
+from dodoo_dbhandler import backuper
+from dodoo_dbhandler._dbutils import db_exists
 
 TEST_DBNAME = "dodoo-cruder-testbackupdb"
 TEST_FILESTORE_FILE = "/dir1/f.txt"

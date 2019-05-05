@@ -37,8 +37,8 @@ setup(
     ],
     entry_points="""
         [core_package.cli_plugins]
-        init=src.initializer:init
-        copy=src.copier:copy
-        snapshot=src.snapshotter:snapshot
+        init=dodoo_dbhandler.initializer:init
+        copy=dodoo_dbhandler.copier:copy
+        snapshot=dodoo_dbhandler.snapshotter:snapshot
     """,
 )

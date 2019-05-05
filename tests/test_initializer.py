@@ -31,7 +31,7 @@ import mock
 import pytest
 from click.testing import CliRunner
 
-from src import initializer
+from dodoo_dbhandler import initializer
 
 TEST_DBNAME = "dodoo-initializer-testdb"
 TEST_DBNAME_NEW = "dodoo-initializer-testdb-new"
