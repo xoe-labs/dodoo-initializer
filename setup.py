@@ -39,6 +39,6 @@ setup(
         [core_package.cli_plugins]
         init=dodoo_dbhandler.initializer:init
         copy=dodoo_dbhandler.copier:copy
-        snapshot=dodoo_dbhandler.snapshotter:snapshot
+        snapshot=dodoo_dbhandler.backuper:snapshot
     """,
 )
