@@ -22,6 +22,7 @@
 #
 
 import contextlib
+import csv
 import hashlib
 import logging
 import os
@@ -417,6 +418,10 @@ def init(
     checksum of modules provided with the -m option, including their
     dependencies and corresponding auto_install modules.
     """
+
+    # See commit 68f14c68709bbb50cb7fb66d288955e1d769c5ff in odoo/odoo
+    csv.field_size_limit(500 * 1024 * 1024)
+
     module_names = [m.strip() for m in modules.split(",")]
     if not cache:
         if new_database:
